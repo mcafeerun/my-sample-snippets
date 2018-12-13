@@ -1,0 +1,8 @@
+> Set the environment variable NODE_TLS_REJECT_UNAUTHORIZED = 0
+    > Run following cmds
+        $ npm config set strict-ssl false
+        $ npm config set registry http://your.org.repo.host/api/npm/npm-repos
+        $ npm config set rejectUnauthorized false
+    > Some windows PCs will have trouble building the project. To overcome it, run following command in cmd prompt as admin/eleveated (this step might need PC restart post installation)
+        $ npm install --global --production windows-build-tools
+        Note: If above step failed with hppt status 400, ensure you have paython installed and PATH environment variable is setup. To check if environment vaiable is setup correctly, issue cmd python in cmd prompt. It should show the python version.
