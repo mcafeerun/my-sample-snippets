@@ -1,0 +1,37 @@
+Elastic Search Config:
+$ sudo vi /etc/sysctl.conf
+//Add following lines at the bottom of the sysctl.conf and save it
+#added for elastic search
+vm.max_map_count=262144
+ 
+$ cd /usr/share/reportportal
+$ sudo mkdir -p ./data/elasticsearch/
+$ sudo chmod -R 777 ./data
+$ sudo chgrp -R 1000 ./data
+$ sudo mkdir -p /usr/share/elasticsearch/data/
+$ sudo chmod -R g+rwx /usr/share/elasticsearch
+$ sudo chgrp -R 1000 /usr/share/elasticsearch
+---------------------------------------------------------------------------------
+MongoDB: 
+$ sudo yum install -y ./mongodb-org-3.4.16-1.el6.x86_64.rpm ./mongodb-org-mongos-3.4.16-1.el6.x86_64.rpm ./mongodb-org-server-3.4.16-1.el6.x86_64.rpm ./mongodb-org-shell-3.4.16-1.el6.x86_64.rpm ./mongodb-org-tools-3.4.16-1.el6.x86_64.rpm
+/etc/mongod.conf
+  # network interfaces
+  net:
+    port: 27017
+    bindIp: 0.0.0.0 
+-------------------------------------------------------------------------------------
+sudo docker-compose -p reportportal up -d --force-recreate
+
+# View the status of service
+    $ docker ps --filter "name=reportportal"
+ 
+ 
+# To view the logs of specific service (Eg: ui or api or analyzer)
+    $ docker-compose -p reportportal logs ui
+    $ docker-compose -p reportportal logs analyzer
+ 
+ 
+# To tail a log of specific service
+    $ docker-compose -p reportportal logs -f ui
+    
+sudo docker-compose down
