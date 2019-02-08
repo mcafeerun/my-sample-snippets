@@ -1,0 +1,17 @@
+db.getCollection('testItem').find({"_id" : ObjectId("5c0fb55f36d1a00001ac8b8d")})
+
+db.getCollection('log').find({"_id" : ObjectId("5c0fb59036d1a00001ac8bf7")})
+
+    "binary_content" : {
+        "id" : "5c0fb59036d1a00001ac8c07",
+        "thumbnail_id" : "5c0fb59036d1a00001ac8c03",
+        "content_type" : "image/png"
+    },
+    "testItemRef" : "5c0fb55f36d1a00001ac8b8d",
+
+
+db.getCollection('fs.files').find({"_id" : ObjectId("5c0fb59036d1a00001ac8c03")})
+db.getCollection('fs.chunks').find({"files_id" : ObjectId("5c0fb59036d1a00001ac8c03")})
+	
+	------------------------------------------------------
+  
