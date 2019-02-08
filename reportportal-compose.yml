@@ -1,0 +1,84 @@
+version: '2'
+services:
+  registry:
+    image: 'consul:1.0.6'
+    volumes:
+      - './data/consul:/consul/data'
+    ports:
+      - '8500:8500'
+    command: agent -server -bootstrap-expect=1 -ui -client 0.0.0.0
+    environment:
+      - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
+    restart: always
+  uat:
+    image: 'reportportal/service-authorization:4.2.0'
+    environment:
+      - RP_PROFILES=docker
+      - RP_SESSION_LIVE=86400
+      - >-
+        RP_MONGO_URI=mongodb://hostname.com:27017/reportportal?authSource=reportportal
+    restart: always
+  gateway:
+    image: 'traefik:1.5'
+    ports:
+      - '8080:8080'
+      - '8081:8081'
+    command:
+      - '--consulcatalog.endpoint=registry:8500'
+      - '--defaultEntryPoints=http'
+      - '--entryPoints=Name:http Address::8080'
+      - '--logLevel=DEBUG'
+      - '--web'
+      - '--web.address=:8081'
+    restart: always
+  index:
+    image: 'reportportal/service-index:4.2.0'
+    environment:
+      - RP_SERVER_PORT=8080
+      - RP_PROXY_CONSUL=true
+    depends_on:
+      - registry
+      - gateway
+    restart: always
+  api:
+    image: 'reportportal/service-api:4.2.1'
+    environment:
+      - RP_PROFILES=docker
+      - 'JAVA_OPTS=-Xmx1g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp'
+      - >-
+        RP_MONGO_URI=mongodb://hostname.com:27017/reportportal?authSource=reportportal
+    restart: always
+  ui:
+    image: 'reportportal/service-ui:4.2.2'
+    environment:
+      - RP_SERVER.PORT=8080
+      - RP_CONSUL.TAGS=urlprefix-/ui opts strip=/ui
+      - 'RP_CONSUL.ADDRESS=registry:8500'
+    restart: always
+  analyzer:
+    image: 'reportportal/service-analyzer:4.2.0'
+    depends_on:
+      - registry
+      - gateway
+      - elasticsearch
+    restart: always
+  elasticsearch:
+    image: 'elastic/elasticsearch:6.1.1'
+    ports: 
+        - '9200:9200'
+    restart: always
+    volumes:
+      - './data/elasticsearch:/usr/share/elasticsearch/data'
+    environment:
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+  rally:
+    image: 'reportportal/service-rally:4.2.0'
+    environment:
+      - RP_PROFILES=docker
+      - >-
+        RP_MONGO_URI=mongodb://hostname.com:27017/reportportal?authSource=reportportal
+    restart: always
