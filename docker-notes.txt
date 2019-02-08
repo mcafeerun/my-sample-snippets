@@ -1,0 +1,46 @@
+$ sudo docker-compose up --force-recreate
+$ sudo docker-compose down
+-------------------------------------------------------------------------------------------------
+Docker Install:
+$ sudo yum install -y ./docker-engine-1.13.1-1.el7.centos.x86_64.rpm ./docker-engine-selinux-1.13.1-1.el7.centos.noarch.rpm
+$ sudo systemctl start docker
+$ sudo usermod -aG docker $USER
+$ sudo systemctl enable docker.service
+$ sudo reboot
+-------------------------------------------------------------------------------------------------
+Compose Install:
+$ sudo yum install epel-release
+$ sudo yum install -y python-pip
+$ sudo pip install docker-compose
+$ sudo yum upgrade python* 
+$ sudo reboot
+-------------------------------------------------------------------------------------------------
+hello-world docker-compose.yml
+my-test:
+  image: hello-world
+  
+$ mkdir hello-world
+$ cd hello-world
+<copy the docker-compose.yml to the above folder through Winscp or any SFTP client>
+$ docker-compose up
+<Check if hello-world test app is running>
+$ docker-compose ps
+ 
+ 
+        Name           Command   State    Ports
+-----------------------------------------------
+helloworld_my-test_1   /hello    Exit 0
+ 
+ 
+$ docker-compose stop
+
+-------------------------------------------------------------------------------------------------
+Grow LV:
+$ OPTIONS="--selinux-enabled -g /opt/artifacts/docker"
+$ sudo -s
+$ df -h
+$ cd /opt
+$ /sbin/lvextend -L30G /path/of/logical-volumnr
+$ xfs_growfs /path/of/logical-volumnr
+$ exit
+
